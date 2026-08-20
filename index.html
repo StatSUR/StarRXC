@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>星星RXC · 个人博客</title>
+    <link rel="icon" href="LOGO.png" type="image/png">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="blog-container">
+        <!-- ==================== 左侧长卡片 ==================== -->
+        <aside class="left-card glass-card">
+            <div class="avatar-wrapper">
+                <div class="avatar" role="img" aria-label="星星RXC的头像"></div>
+            </div>
+
+            <div class="profile-info">
+                <h1 class="profile-name">星星RXC</h1>
+                <p class="profile-bio">来自山西·运城</p>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- 社交链接：B站、GitHub、MidiShow、群网站 -->
+            <div class="social-links">
+                <a href="https://space.bilibili.com/2124973150?spm_id_from=333.1007.0.0" target="_blank" class="social-link">
+                    <i class="fa-solid fa-video"></i> B站主页
+                </a>
+                <a href="https://github.com/StatSUR" target="_blank" class="social-link">
+                    <i class="fa-brands fa-github"></i> GitHub
+                </a>
+                <a href="https://www.midishow.com/u/%E6%98%9F%E6%98%9FRXC" target="_blank" class="social-link">
+                    <i class="fa-solid fa-music"></i> MidiShow
+                </a>
+                <a href="https://qquschat.starrxc.xyz" target="_blank" class="social-link">
+                    <i class="fa-solid fa-comments"></i> 群网站
+                </a>
+            </div>
+
+            <!-- 邮箱长条（不可点击） -->
+            <div class="contact-section">
+                <div class="contact-email">
+                    <i class="fa-solid fa-envelope"></i>
+                    <span>StarRXC@qq.com</span>
+                </div>
+            </div>
+
+            <!-- 标签云（位于最底部） -->
+            <div class="tag-cloud">
+                <span class="tag">#音乐</span>
+                <span class="tag">#Windows</span>
+                <span class="tag">#计算机</span>
+                <span class="tag">#信息</span>
+            </div>
+        </aside>
+
+        <!-- ==================== 右侧区域 ==================== -->
+        <section class="right-section">
+
+            <!-- B站长条卡片 -->
+            <div class="bilibili-banner glass-card" id="bilibiliBanner">
+                <div class="banner-header" id="bannerHeader">
+                    <div class="banner-title-group">
+                        <div class="banner-icon"><i class="fa-solid fa-play"></i></div>
+                        <div>
+                            <div class="banner-title">我的哔哩哔哩主页</div>
+                            <div class="banner-subtitle">点击展开查看详情</div>
+                        </div>
+                    </div>
+                    <span class="banner-arrow"><i class="fa-solid fa-chevron-down"></i></span>
+                </div>
+                <div class="banner-content" id="bannerContent">
+                    <div class="bilibili-profile">
+                        <div class="bilibili-avatar" role="img" aria-label="B站头像"></div>
+                        <div class="bilibili-info">
+                            <div class="bilibili-name">星星RXC</div>
+                            <div class="bilibili-uid">UID: 2124973150</div>
+                            <div class="bilibili-desc">运城高中生。专注Windows系统、音乐和游戏。渴望将事务研究透彻。如有疑问请访问群网站向我发送邮件。</div>
+                        </div>
+                    </div>
+                    <a href="https://space.bilibili.com/2124973150?spm_id_from=333.1007.0.0" target="_blank" class="bilibili-link-btn">
+                        访问B站主页 <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- GitHub 卡片 -->
+            <div class="github-card glass-card">
+                <div class="github-left">
+                    <div class="github-icon"><i class="fa-brands fa-github"></i></div>
+                    <div class="github-info">
+                        <div class="github-name">StatSUR</div>
+                        <div class="github-desc">我的 GitHub 主页</div>
+                    </div>
+                </div>
+                <a href="https://github.com/StatSUR" target="_blank" class="github-link-btn">
+                    访问 GitHub <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
+
+            <!-- 文章标题栏 -->
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fa-solid fa-book-open"></i> 最新 <span>文章</span>
+                    <span class="article-count" id="articleCount"></span>
+                </h2>
+                <button class="view-all" id="viewAllBtn">
+                    查看全部 <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+
+            <!-- 横向时间表 -->
+            <div class="timeline-wrapper" id="timelineWrapper"></div>
+
+            <!-- 文章显示区域 -->
+            <div class="article-groups" id="articleGroups"></div>
+        </section>
+    </div>
+
+    <script>
+        (function() {
+            // B站卡片展开/折叠
+            const banner = document.getElementById('bilibiliBanner');
+            const header = document.getElementById('bannerHeader');
+            if (banner && header) {
+                header.addEventListener('click', function(e) {
+                    if (e.target.closest('a, button')) return;
+                    banner.classList.toggle('expanded');
+                });
+                header.setAttribute('tabindex', '0');
+                header.setAttribute('role', 'button');
+                header.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        banner.classList.toggle('expanded');
+                    }
+                });
+            }
+
+            let allArticles = [];
+            let currentMode = 'latest'; // 'latest' 或 'all'
+            let activeMonth = null;
+
+            const viewAllBtn = document.getElementById('viewAllBtn');
+
+            // 读取 pages.json
+            fetch('pages.json')
+                .then(response => {
+                    if (!response.ok) throw new Error('无法加载 pages.json');
+                    return response.json();
+                })
+                .then(data => {
+                    allArticles = data.articles || [];
+                    document.getElementById('articleCount').textContent = `(${allArticles.length})`;
+                    renderTimeline(allArticles);
+                })
+                .catch(err => {
+                    console.error(err);
+                    document.getElementById('articleGroups').innerHTML = '<p class="error">加载文章失败，请使用本地服务器打开页面。</p>';
+                });
+
+            function renderTimeline(articles) {
+                const wrapper = document.getElementById('timelineWrapper');
+                if (!articles.length) {
+                    wrapper.innerHTML = '';
+                    return;
+                }
+
+                const monthMap = {};
+                articles.forEach(article => {
+                    const ym = article.date.slice(0, 7);
+                    if (!monthMap[ym]) monthMap[ym] = 0;
+                    monthMap[ym]++;
+                });
+
+                const sortedMonths = Object.keys(monthMap).sort((a, b) => b.localeCompare(a));
+                const latestMonth = sortedMonths[0];
+                activeMonth = latestMonth;
+
+                wrapper.innerHTML = `
+                    <div class="timeline">
+                        ${sortedMonths.map(ym => {
+                            const [year, month] = ym.split('-');
+                            const count = monthMap[ym];
+                            return `
+                                <div class="timeline-item ${ym === latestMonth ? 'active' : ''}" data-month="${ym}">
+                                    <span class="timeline-dot"></span>
+                                    <span class="timeline-date">${year}年${parseInt(month)}月</span>
+                                    <span class="timeline-count">${count}篇</span>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                `;
+
+                document.querySelectorAll('.timeline-item').forEach(item => {
+                    item.addEventListener('click', function() {
+                        document.querySelectorAll('.timeline-item').forEach(el => el.classList.remove('active'));
+                        this.classList.add('active');
+                        // 添加脉冲动画
+                        this.classList.add('pulse');
+                        setTimeout(() => this.classList.remove('pulse'), 300);
+
+                        const ym = this.dataset.month;
+                        activeMonth = ym;
+                        currentMode = 'latest';
+                        updateViewAllButton();
+                        renderMonthArticles(ym, articles);
+                    });
+                });
+
+                // 默认显示最新月
+                renderMonthArticles(latestMonth, articles);
+                updateViewAllButton();
+            }
+
+            function renderMonthArticles(ym, articles) {
+                const container = document.getElementById('articleGroups');
+                const monthArticles = articles.filter(article => article.date.slice(0, 7) === ym);
+                if (!monthArticles.length) {
+                    container.innerHTML = '<p class="empty">该月份暂无文章</p>';
+                    return;
+                }
+
+                const [year, month] = ym.split('-');
+                const categoryMap = { tech: '技术', life: '生活', notes: '笔记' };
+
+                container.innerHTML = `
+                    <div class="month-group fade-in-up">
+                        <h3 class="month-title">
+                            <i class="fa-solid fa-calendar-alt"></i>
+                            ${year}年${parseInt(month)}月
+                            <span class="month-count">${monthArticles.length}篇</span>
+                        </h3>
+                        <div class="article-grid">
+                            ${monthArticles.map((article, index) => {
+                                const categoryClass = article.category || 'notes';
+                                const categoryLabel = categoryMap[categoryClass] || '笔记';
+                                return `
+                                    <a href="${article.url || '#'}" class="article-card-link" ${article.url ? '' : 'onclick="return false;"'}>
+                                        <article class="article-card fade-in-up" style="animation-delay: ${index * 60}ms">
+                                            <div class="article-meta">
+                                                <span><i class="fa-solid fa-calendar-days"></i> ${article.date}</span>
+                                                <span class="article-category ${categoryClass}">${categoryLabel}</span>
+                                            </div>
+                                            <h4 class="article-title">${article.title}</h4>
+                                            <p class="article-excerpt">${article.excerpt}</p>
+                                            <div class="article-footer">
+                                                <span class="read-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+                                            </div>
+                                        </article>
+                                    </a>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            function renderAllArticles(articles) {
+                const container = document.getElementById('articleGroups');
+                if (!articles.length) {
+                    container.innerHTML = '<p class="empty">暂无文章</p>';
+                    return;
+                }
+
+                // 按年月分组
+                const groups = {};
+                articles.forEach(article => {
+                    const ym = article.date.slice(0, 7);
+                    if (!groups[ym]) groups[ym] = [];
+                    groups[ym].push(article);
+                });
+                const sortedMonths = Object.keys(groups).sort((a, b) => b.localeCompare(a));
+                const categoryMap = { tech: '技术', life: '生活', notes: '笔记' };
+
+                container.innerHTML = sortedMonths.map((ym, groupIndex) => {
+                    const [year, month] = ym.split('-');
+                    const monthArticles = groups[ym];
+                    return `
+                        <div class="month-group fade-in-up" style="animation-delay: ${groupIndex * 100}ms">
+                            <h3 class="month-title">
+                                <i class="fa-solid fa-calendar-alt"></i>
+                                ${year}年${parseInt(month)}月
+                                <span class="month-count">${monthArticles.length}篇</span>
+                            </h3>
+                            <div class="article-grid">
+                                ${monthArticles.map((article, index) => {
+                                    const categoryClass = article.category || 'notes';
+                                    const categoryLabel = categoryMap[categoryClass] || '笔记';
+                                    return `
+                                        <a href="${article.url || '#'}" class="article-card-link" ${article.url ? '' : 'onclick="return false;"'}>
+                                            <article class="article-card fade-in-up" style="animation-delay: ${index * 60 + groupIndex * 100}ms">
+                                                <div class="article-meta">
+                                                    <span><i class="fa-solid fa-calendar-days"></i> ${article.date}</span>
+                                                    <span class="article-category ${categoryClass}">${categoryLabel}</span>
+                                                </div>
+                                                <h4 class="article-title">${article.title}</h4>
+                                                <p class="article-excerpt">${article.excerpt}</p>
+                                                <div class="article-footer">
+                                                    <span class="read-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+                                                </div>
+                                            </article>
+                                        </a>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            // 查看全部按钮点击切换
+            viewAllBtn.addEventListener('click', function() {
+                if (currentMode === 'latest') {
+                    currentMode = 'all';
+                    renderAllArticles(allArticles);
+                } else {
+                    currentMode = 'latest';
+                    // 恢复显示当前选中的月份（activeMonth 可能还是最新月或用户点击的月份）
+                    renderMonthArticles(activeMonth, allArticles);
+                }
+                updateViewAllButton();
+                // 按钮反馈动画
+                this.classList.add('clicked');
+                setTimeout(() => this.classList.remove('clicked'), 200);
+            });
+
+            function updateViewAllButton() {
+                if (currentMode === 'latest') {
+                    viewAllBtn.innerHTML = '查看全部 <i class="fa-solid fa-arrow-right"></i>';
+                } else {
+                    viewAllBtn.innerHTML = '收起 <i class="fa-solid fa-arrow-up"></i>';
+                }
+            }
+        })();
+    </script>
+</body>
+</html>

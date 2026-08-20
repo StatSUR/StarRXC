@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文章 · 星星RXC</title>
+    <link rel="icon" href="../LOGO.png" type="image/png">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        :root {
+            --bg: #f0ede8;
+            --glass-bg: rgba(255, 255, 255, 0.45);
+            --glass-border: rgba(255, 255, 255, 0.6);
+            --glass-shadow: 0 20px 45px rgba(0, 0, 0, 0.10);
+            --text-primary: #1a1a1a;
+            --text-secondary: #555555;
+            --text-muted: #7a7a7a;
+            --accent: #7a9fbf;
+            --accent-dark: #5f7f9e;
+            --accent-soft: rgba(122, 159, 191, 0.18);
+            --radius-xl: 32px;
+            --radius-lg: 20px;
+            --radius-md: 12px;
+            --blur: 20px;
+            --font-sans: 'Inter', 'PingFang SC', 'Microsoft YaHei', -apple-system, sans-serif;
+            --transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: var(--font-sans);
+            color: var(--text-primary);
+            line-height: 1.7;
+            min-height: 100vh;
+            padding: 32px 20px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background-image: url('../Photo.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-color: var(--bg);
+            position: relative;
+            isolation: isolate;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(240, 240, 240, 0.3));
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* ===== 顶部导航（增强可见性） ===== */
+        .top-nav {
+            max-width: 900px;
+            margin: 0 auto 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 24px;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            transition: all var(--transition);
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 700;
+            background: var(--accent-soft);
+            padding: 8px 20px;
+            border-radius: 30px;
+            border: 1px solid rgba(122, 159, 191, 0.3);
+            transition: all var(--transition);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        .back-link i {
+            transition: transform 0.3s;
+            color: var(--accent);
+        }
+        .back-link:hover {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(122, 159, 191, 0.4);
+        }
+        .back-link:hover i {
+            transform: translateX(-4px);
+            color: #fff;
+        }
+
+        .nav-title {
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: -0.2px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .nav-title i { color: var(--accent); }
+
+        /* ===== 文章主容器（更大圆角、玻璃态） ===== */
+        .article-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 48px 56px;
+            background: var(--glass-bg);
+            -webkit-backdrop-filter: blur(var(--blur));
+            backdrop-filter: blur(var(--blur));
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+            border-radius: var(--radius-xl);
+            transition: all var(--transition);
+            animation: containerIn 0.6s ease-out both;
+        }
+
+        @keyframes containerIn {
+            from { opacity: 0; transform: translateY(20px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .article-header {
+            margin-bottom: 36px;
+            padding-bottom: 28px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+            position: relative;
+        }
+        .article-header::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 70px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-dark));
+            border-radius: 4px;
+            animation: lineGrow 0.8s ease-out both;
+        }
+
+        @keyframes lineGrow {
+            from { width: 0; opacity: 0; }
+            to { width: 70px; opacity: 1; }
+        }
+
+        .article-title {
+            font-size: 38px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            line-height: 1.25;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+            text-shadow: 0 2px 10px rgba(255, 255, 255, 0.7);
+            animation: titleIn 0.7s ease-out both;
+        }
+
+        @keyframes titleIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .article-meta {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+        .article-meta span {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.35);
+            padding: 6px 16px;
+            border-radius: 30px;
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            transition: all var(--transition);
+            animation: metaIn 0.5s ease-out both;
+        }
+        .article-meta span:nth-child(1) { animation-delay: 0.1s; }
+        .article-meta span:nth-child(2) { animation-delay: 0.2s; }
+
+        @keyframes metaIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .article-meta i { color: var(--accent); font-size: 14px; }
+        .article-meta span:hover {
+            background: var(--accent-soft);
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        /* ===== 文章内容（所有元素圆角+动画） ===== */
+        .article-content {
+            font-size: 16px;
+            line-height: 1.85;
+            color: var(--text-secondary);
+        }
+
+        .article-content h1,
+        .article-content h2,
+        .article-content h3,
+        .article-content h4 {
+            color: var(--text-primary);
+            margin: 1.8em 0 0.8em;
+            line-height: 1.4;
+            font-weight: 700;
+            position: relative;
+        }
+        .article-content h1 { font-size: 1.9em; }
+        .article-content h2 {
+            font-size: 1.6em;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+            transition: border-color var(--transition);
+        }
+        .article-content h2:hover { border-color: var(--accent); }
+        .article-content h3 { font-size: 1.3em; }
+
+        .article-content p {
+            margin-bottom: 1.3em;
+            transition: color var(--transition);
+        }
+
+        .article-content a {
+            color: var(--accent);
+            text-decoration: none;
+            border-bottom: 1px dashed var(--accent);
+            transition: all var(--transition);
+        }
+        .article-content a:hover {
+            color: var(--accent-dark);
+            border-bottom-style: solid;
+            background: rgba(122, 159, 191, 0.1);
+        }
+
+        .article-content img {
+            max-width: 100%;
+            border-radius: var(--radius-lg);
+            margin: 24px 0;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+            transition: transform var(--transition), box-shadow var(--transition);
+        }
+        .article-content img:hover {
+            transform: scale(1.01);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .article-content blockquote {
+            border-left: 5px solid var(--accent);
+            padding: 16px 24px;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 0 var(--radius-md) var(--radius-md) 0;
+            margin: 20px 0;
+            color: var(--text-secondary);
+            font-style: italic;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            transition: all var(--transition);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        .article-content blockquote:hover {
+            background: rgba(255, 255, 255, 0.6);
+            border-left-color: var(--accent-dark);
+            transform: translateX(4px);
+        }
+
+        .article-content code {
+            background: rgba(255, 255, 255, 0.55);
+            padding: 2px 8px;
+            border-radius: 8px;
+            font-size: 0.9em;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            transition: background var(--transition);
+        }
+        .article-content code:hover {
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .article-content pre {
+            background: rgba(255, 255, 255, 0.4);
+            padding: 20px;
+            border-radius: var(--radius-md);
+            overflow-x: auto;
+            margin: 20px 0;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            transition: all var(--transition);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        .article-content pre:hover {
+            background: rgba(255, 255, 255, 0.55);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        .article-content pre code {
+            background: none;
+            padding: 0;
+            font-size: 0.9em;
+        }
+
+        .article-content ul,
+        .article-content ol {
+            margin: 0 0 1.3em 1.5em;
+        }
+        .article-content li {
+            margin-bottom: 6px;
+            transition: transform var(--transition);
+        }
+        .article-content li:hover {
+            transform: translateX(4px);
+            color: var(--text-primary);
+        }
+
+        .error-msg {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+            font-size: 16px;
+        }
+
+        /* 加载动画 */
+        .loading-spinner {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            padding: 60px 20px;
+        }
+        .loading-spinner i {
+            font-size: 28px;
+            color: var(--accent);
+            animation: spin 1.2s linear infinite;
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in { animation: fadeIn 0.5s ease-out both; }
+
+        /* ===== 响应式 ===== */
+        @media (max-width: 640px) {
+            body { padding: 16px 10px; }
+            .top-nav {
+                flex-direction: column;
+                gap: 12px;
+                align-items: flex-start;
+                padding: 12px 18px;
+                border-radius: 30px;
+            }
+            .back-link {
+                font-size: 14px;
+                padding: 8px 16px;
+            }
+            .article-container {
+                padding: 28px 20px;
+                border-radius: var(--radius-lg);
+            }
+            .article-title { font-size: 26px; }
+            .article-meta { gap: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 顶部导航 -->
+    <nav class="top-nav">
+        <a href="../index.html" class="back-link">
+            <i class="fa-solid fa-arrow-left"></i> 返回首页
+        </a>
+        <span class="nav-title">
+            <i class="fa-solid fa-file-lines"></i> 文章详情
+        </span>
+    </nav>
+
+    <!-- 文章内容容器 -->
+    <main class="article-container" id="articleContainer">
+        <div class="loading-spinner">
+            <i class="fa-solid fa-spinner"></i> 正在加载文章...
+        </div>
+    </main>
+
+    <script>
+        (function() {
+            const container = document.getElementById('articleContainer');
+
+            const params = new URLSearchParams(window.location.search);
+            const articleId = params.get('id'); // 例如 ?id=2026.8/2026820
+
+            if (!articleId) {
+                container.innerHTML = '<div class="error-msg">缺少文章参数，请从首页点击文章进入。</div>';
+                return;
+            }
+
+            const mdUrl = `${articleId}.md`;
+
+            fetch(mdUrl)
+                .then(response => {
+                    if (!response.ok) throw new Error('文章不存在');
+                    return response.text();
+                })
+                .then(markdown => {
+                    const htmlContent = marked.parse(markdown);
+                    const titleMatch = markdown.match(/^#\s+(.+)$/m);
+                    const title = titleMatch ? titleMatch[1] : '未命名文章';
+                    const dateMatch = markdown.match(/^>\s*日期[:：]\s*(.+)$/m);
+                    const date = dateMatch ? dateMatch[1] : '未知日期';
+
+                    container.innerHTML = `
+                        <div class="article-header">
+                            <h1 class="article-title">${title}</h1>
+                            <div class="article-meta">
+                                <span><i class="fa-solid fa-calendar-days"></i> ${date}</span>
+                                <span><i class="fa-solid fa-user"></i> 星星RXC</span>
+                            </div>
+                        </div>
+                        <div class="article-content">${htmlContent}</div>
+                    `;
+
+                    container.classList.add('fade-in');
+                })
+                .catch(err => {
+                    console.error(err);
+                    container.innerHTML = '<div class="error-msg">文章加载失败，请确认文件存在或使用本地服务器打开。</div>';
+                });
+        })();
+    </script>
+</body>
+</html>
