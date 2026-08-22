@@ -250,6 +250,12 @@ body::before {
 .view-all:hover { background: var(--accent); color: #fff; border-color: var(--accent); transform: translateY(-2px); }
 .view-all.clicked { transform: scale(0.9); }
 
+/* ========== 查看全部按钮箭头旋转 ========== */
+.view-all i {
+    display: inline-block;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); /* 慢快慢 */
+}
+
 /* 横向时间表 */
 .timeline-wrapper {
     overflow-x: auto; padding: 8px 0 12px;
