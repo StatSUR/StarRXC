@@ -6,7 +6,7 @@
     <title>星星RXC · 个人博客</title>
     <link rel="icon" href="LOGO.png" type="image/png">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="Style.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -143,6 +143,7 @@
             let allArticles = [];
             let currentMode = 'latest'; // 'latest' 或 'all'
             let activeMonth = null;
+            let iconRotation = 0; // 箭头当前旋转角度（初始 0°）
 
             const viewAllBtn = document.getElementById('viewAllBtn');
 
@@ -207,6 +208,8 @@
                         const ym = this.dataset.month;
                         activeMonth = ym;
                         currentMode = 'latest';
+                        // 点击时间线时，强制箭头回到初始向右状态（重置角度）
+                        iconRotation = 0;
                         updateViewAllButton();
                         renderMonthArticles(ym, articles);
                     });
@@ -313,15 +316,16 @@
                 }).join('');
             }
 
-            // 查看全部按钮点击切换
+            // 查看全部按钮点击切换（修正版）
             viewAllBtn.addEventListener('click', function() {
                 if (currentMode === 'latest') {
                     currentMode = 'all';
                     renderAllArticles(allArticles);
+                    iconRotation -= 90; // 展开：逆时针90°
                 } else {
                     currentMode = 'latest';
-                    // 恢复显示当前选中的月份（activeMonth 可能还是最新月或用户点击的月份）
                     renderMonthArticles(activeMonth, allArticles);
+                    iconRotation -= 270; // 收回：逆时针270°
                 }
                 updateViewAllButton();
                 // 按钮反馈动画
@@ -330,11 +334,16 @@
             });
 
             function updateViewAllButton() {
+                const icon = viewAllBtn.querySelector('i');
+                // 更新按钮文字（使用 textContent 保留图标）
                 if (currentMode === 'latest') {
-                    viewAllBtn.innerHTML = '查看全部 <i class="fa-solid fa-arrow-right"></i>';
+                    viewAllBtn.childNodes[0].textContent = '查看全部 ';
                 } else {
-                    viewAllBtn.innerHTML = '收起 <i class="fa-solid fa-arrow-up"></i>';
+                    viewAllBtn.childNodes[0].textContent = '收起 ';
                 }
+                // 不修改图标类名，始终使用 fa-arrow-right
+                // 仅通过 transform 旋转改变方向
+                icon.style.transform = `rotate(${iconRotation}deg)`;
             }
         })();
     </script>
