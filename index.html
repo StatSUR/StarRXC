@@ -278,7 +278,7 @@
                     groups[ym].push(article);
                 });
                 const sortedMonths = Object.keys(groups).sort((a, b) => b.localeCompare(a));
-                const categoryMap = { tech: '技术', life: '生活', notes: '笔记'，name: '作者:RXC' };
+                const categoryMap = { tech: '技术', life: '生活', notes: '笔记',name: '作者:RXC' };
 
                 container.innerHTML = sortedMonths.map((ym, groupIndex) => {
                     const [year, month] = ym.split('-');
